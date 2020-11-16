@@ -1,12 +1,10 @@
 import React from 'react';
-import io from 'socket.io-client';
 //importing icons....
 import onlineIcon from '../../icons/onlineIcon.png';
 import closeIcon from '../../icons/closeIcon.png';
 
 import './InfoBar.css';
 import { Link } from 'react-router-dom';
-let socket;
 const InfoBar = ({room}) => {
   // const ENDPOINT = 'localhost:3001';
   // socket = io(ENDPOINT,{
