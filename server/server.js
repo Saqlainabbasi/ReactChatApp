@@ -15,7 +15,8 @@ app.use(function(req, res, next) {
 });
 //routes
 const joinRoutes = require('./routes/joinRoutes');
-const { addUser, getUser } = require('./user');
+const { addUser, getUser,removeUser, getUserInRoom } = require('./user');
+const user = require('./user');
 
 //using routes...
 
@@ -42,6 +43,8 @@ io.on('connection', (socket)=>{
         socket.broadcast.to(user.room).emit('message', {user:'admin', text:`${user.name}, has joined..!!`});
 
         socket.join(user.room)
+
+        socket.to(user.room).emit('roomData', {room : user.room, users:getUserInRoom(user.room)})
         
         cb();
     })
@@ -50,6 +53,7 @@ io.on('connection', (socket)=>{
         const user = getUser(socket.id);
         
         io.to(user.room).emit('message', {user:user.name, text:message});
+        io.to(user.room).emit('roomData', {room:user.room, users:getUserInRoom(user.room)});
 
         cb();
 
@@ -58,7 +62,12 @@ io.on('connection', (socket)=>{
 
 
     socket.on('disconnect', ()=>{
-        console.log('user has left..!!!')
+        const user = removeUser(socket.id);
+
+        if(user){
+            io.on(user.room).emit('message', {user:'admin', text:`${user.name} has left.!!!!`})
+
+        }
     })
 })
 
